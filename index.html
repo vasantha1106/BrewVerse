@@ -1,0 +1,1026 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BrewVerse — Brew Your Perfect Cup</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700;9..144,900&family=Sora:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --espresso-950:#1c1108;
+    --espresso-900:#2b1a12;
+    --roast-700:#4a2f22;
+    --clay-500:#a9744f;
+    --copper-400:#c77d3f;
+    --copper-300:#dd9a5f;
+    --cream-100:#f6ead6;
+    --cream-050:#fbf3e4;
+    --foam-050:#fff9ee;
+    --ink:#241712;
+    --paper:#f2e6cf;
+    --line: rgba(43,26,18,0.14);
+    --glass-bg: rgba(255,249,238,0.55);
+    --glass-border: rgba(255,255,255,0.5);
+    --shadow-soft: 0 10px 30px rgba(43,26,18,0.18);
+    --radius-lg: 26px;
+    --radius-md: 16px;
+    --radius-sm: 10px;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    font-family:'Sora', sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 15% 8%, rgba(199,125,63,0.16), transparent 40%),
+      radial-gradient(circle at 85% 0%, rgba(169,116,79,0.14), transparent 45%),
+      linear-gradient(180deg, var(--cream-050) 0%, var(--cream-100) 40%, #eddcc0 100%);
+    min-height:100vh;
+  }
+  h1,h2,h3,h4{
+    font-family:'Fraunces', serif;
+    margin:0;
+    color:var(--espresso-900);
+    letter-spacing:-0.01em;
+  }
+  .mono{font-family:'IBM Plex Mono', monospace;}
+  a{color:inherit;}
+  ::selection{background:var(--copper-300); color:var(--espresso-950);}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important;}
+  }
+
+  .wrap{max-width:1180px; margin:0 auto; padding:0 24px;}
+
+  /* ---------- NAV ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    backdrop-filter:blur(10px);
+    background:rgba(246,234,214,0.72);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar .wrap{display:flex; align-items:center; justify-content:space-between; height:64px;}
+  .brand{display:flex; align-items:center; gap:10px; font-family:'Fraunces',serif; font-weight:700; font-size:1.25rem;}
+  .brand .bean{font-size:1.4rem;}
+  .nav-links{display:flex; gap:22px; font-size:0.92rem; font-weight:500;}
+  .nav-links a{text-decoration:none; opacity:0.75; transition:opacity .2s;}
+  .nav-links a:hover{opacity:1;}
+  @media (max-width:720px){.nav-links{display:none;}}
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding:96px 0 70px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-grain{
+    position:absolute; inset:0; pointer-events:none; opacity:0.5;
+    background-image:radial-gradient(rgba(43,26,18,0.05) 1px, transparent 1px);
+    background-size:3px 3px;
+  }
+  .hero .wrap{position:relative; text-align:center; display:flex; flex-direction:column; align-items:center; gap:22px;}
+  .eyebrow{
+    font-family:'IBM Plex Mono', monospace; font-size:0.78rem; letter-spacing:0.16em; text-transform:uppercase;
+    color:var(--clay-500); border:1px solid var(--line); padding:6px 14px; border-radius:999px;
+    background:rgba(255,255,255,0.4);
+  }
+  .hero h1{
+    font-size:clamp(2.4rem, 6vw, 4.4rem);
+    font-weight:700;
+    line-height:1.02;
+  }
+  .hero p.subtitle{
+    max-width:560px; font-size:1.15rem; color:var(--roast-700); opacity:0.9; line-height:1.5;
+  }
+  .btn{
+    border:none; cursor:pointer; font-family:'Sora',sans-serif; font-weight:600;
+    border-radius:999px; transition:transform .18s ease, box-shadow .18s ease, background .2s;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{
+    background:linear-gradient(135deg, var(--copper-400), var(--clay-500));
+    color:var(--foam-050);
+    padding:18px 40px;
+    font-size:1.05rem;
+    box-shadow:0 14px 30px rgba(169,116,79,0.4);
+  }
+  .btn-primary:hover{ box-shadow:0 18px 38px rgba(169,116,79,0.5); transform:translateY(-2px);}
+  .btn-ghost{
+    background:transparent; border:1.5px solid var(--roast-700); color:var(--roast-700);
+    padding:12px 24px; font-size:0.95rem;
+  }
+  .btn-ghost:hover{background:var(--roast-700); color:var(--foam-050);}
+  .hero-cup-peek{ font-size:3rem; margin-top:6px; animation:bob 3.4s ease-in-out infinite;}
+  @keyframes bob{ 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+
+  /* ---------- SECTION TITLES ---------- */
+  .section-head{ text-align:center; max-width:640px; margin:0 auto 40px; }
+  .section-head .eyebrow{ margin-bottom:14px; display:inline-block;}
+  .section-head h2{ font-size:clamp(1.8rem,4vw,2.6rem); margin-bottom:10px;}
+  .section-head p{ color:var(--roast-700); opacity:0.85; font-size:1.02rem; }
+  section{ padding:70px 0; }
+
+  /* ---------- GLASS CARD ---------- */
+  .glass{
+    background:var(--glass-bg);
+    border:1px solid var(--glass-border);
+    backdrop-filter:blur(16px);
+    border-radius:var(--radius-lg);
+    box-shadow:var(--shadow-soft);
+  }
+
+  /* ---------- BREWING LAYOUT ---------- */
+  .brew-grid{
+    display:grid; grid-template-columns:1.15fr 0.85fr; gap:28px; align-items:start;
+  }
+  @media (max-width:940px){ .brew-grid{grid-template-columns:1fr;} }
+
+  .controls{ padding:30px; display:flex; flex-direction:column; gap:26px;}
+  .field-group label.title{
+    font-family:'Fraunces',serif; font-weight:600; font-size:1.05rem; display:flex; align-items:center; gap:8px; margin-bottom:12px;
+  }
+  .chip-row{ display:flex; flex-wrap:wrap; gap:9px; }
+  .chip{
+    border:1.5px solid var(--line); background:rgba(255,255,255,0.5);
+    padding:9px 15px; border-radius:999px; font-size:0.88rem; font-weight:500; cursor:pointer;
+    transition:all .16s ease; user-select:none;
+  }
+  .chip:hover{ border-color:var(--copper-400); transform:translateY(-1px);}
+  .chip.active{
+    background:linear-gradient(135deg, var(--copper-400), var(--clay-500));
+    color:var(--foam-050); border-color:transparent;
+    box-shadow:0 6px 14px rgba(169,116,79,0.35);
+  }
+  .chip .ic{ margin-right:5px; }
+
+  .slider-row{ display:flex; align-items:center; gap:14px; }
+  input[type=range]{
+    -webkit-appearance:none; appearance:none; width:100%; height:6px; border-radius:99px;
+    background:linear-gradient(90deg, var(--copper-300), var(--clay-500));
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:22px; height:22px; border-radius:50%;
+    background:var(--foam-050); border:3px solid var(--clay-500); cursor:pointer;
+    box-shadow:0 3px 8px rgba(43,26,18,0.3);
+  }
+  input[type=range]::-moz-range-thumb{
+    width:22px; height:22px; border-radius:50%; background:var(--foam-050);
+    border:3px solid var(--clay-500); cursor:pointer;
+  }
+  .slider-label{ min-width:78px; font-size:0.85rem; font-weight:600; color:var(--roast-700); font-family:'IBM Plex Mono',monospace;}
+  .scale-caps{ display:flex; justify-content:space-between; font-size:0.72rem; color:var(--roast-700); opacity:0.65; margin-top:6px; font-family:'IBM Plex Mono',monospace;}
+
+  .divider{ height:1px; background:var(--line); }
+
+  .action-row{ display:flex; gap:12px; flex-wrap:wrap; margin-top:6px; }
+  .btn-brew{
+    flex:1; min-width:200px; position:relative; overflow:hidden;
+    background:linear-gradient(135deg,#3d2617, var(--espresso-900));
+    color:var(--cream-100); padding:20px; font-size:1.1rem; letter-spacing:0.03em;
+    border-radius:18px; box-shadow:0 16px 34px rgba(28,17,8,0.35);
+  }
+  .btn-brew:hover{ transform:translateY(-2px); box-shadow:0 20px 40px rgba(28,17,8,0.45);}
+  .btn-surprise{
+    background:var(--foam-050); border:1.5px solid var(--copper-400); color:var(--roast-700);
+    padding:20px 22px; font-size:0.98rem; border-radius:18px;
+  }
+  .btn-surprise:hover{ background:var(--copper-400); color:var(--foam-050);}
+
+  /* ---------- CUP STAGE ---------- */
+  .stage{
+    position:sticky; top:84px;
+    padding:34px 26px 26px;
+    display:flex; flex-direction:column; align-items:center; gap:18px;
+    min-height:520px;
+  }
+  .stage h3{ font-size:1.05rem; text-align:center; opacity:0.75; font-weight:500; font-family:'Sora',sans-serif;}
+  .cup-scene{
+    position:relative; width:220px; height:260px; display:flex; align-items:flex-end; justify-content:center;
+  }
+  .steam{
+    position:absolute; top:-42px; width:10px; height:60px; border-radius:50%;
+    background:rgba(255,255,255,0.55); filter:blur(4px); opacity:0;
+  }
+  .steam.show{ animation:steam-rise 2.6s ease-in-out infinite; }
+  .steam.s1{ left:70px; animation-delay:0s;}
+  .steam.s2{ left:105px; animation-delay:.6s; height:70px;}
+  .steam.s3{ left:135px; animation-delay:1.2s;}
+  @keyframes steam-rise{
+    0%{ opacity:0; transform:translateY(0) scaleX(1);}
+    20%{ opacity:0.65;}
+    100%{ opacity:0; transform:translateY(-60px) scaleX(1.6);}
+  }
+  .cup-body{
+    position:relative; width:172px; height:190px;
+    background:linear-gradient(160deg, #fffdf8, #f1e4cd);
+    border-radius:14px 14px 46px 46px;
+    box-shadow: inset 0 0 0 2px rgba(43,26,18,0.08), 0 18px 30px rgba(43,26,18,0.22);
+    overflow:hidden;
+    border:2px solid rgba(43,26,18,0.12);
+  }
+  .cup-handle{
+    position:absolute; right:-34px; top:52px; width:46px; height:66px;
+    border:10px solid #f1e4cd; border-left:none; border-radius:0 40px 40px 0;
+    box-shadow: 4px 4px 10px rgba(43,26,18,0.15);
+  }
+  .liquid{
+    position:absolute; left:0; right:0; bottom:0; height:0%;
+    background:linear-gradient(180deg, #6b4226, #3b2415);
+    transition:height 1.1s cubic-bezier(.2,.9,.25,1);
+    border-radius:0 0 40px 40px;
+  }
+  .foam{
+    position:absolute; left:0; right:0; height:0px; top:0;
+    background:radial-gradient(ellipse at 30% 20%, #fffdf7, #f3e6cf 70%);
+    opacity:0; transition:opacity .5s ease;
+  }
+  .toppings{ position:absolute; inset:0; pointer-events:none; }
+  .ice-cube{
+    position:absolute; width:20px; height:20px; border-radius:5px;
+    background:linear-gradient(160deg, rgba(255,255,255,0.95), rgba(200,225,235,0.65));
+    border:1px solid rgba(180,210,220,0.9);
+    opacity:0; top:-30px;
+  }
+  .ice-cube.drop{ animation:ice-fall 0.9s ease-in forwards; }
+  @keyframes ice-fall{
+    0%{ opacity:1; top:-30px; transform:rotate(0deg);}
+    80%{ opacity:1;}
+    100%{ top:var(--rest-top, 46px); opacity:1; transform:rotate(18deg);}
+  }
+  .saucer{
+    width:220px; height:18px; border-radius:50%;
+    background:linear-gradient(180deg,#fffdf8,#e9dabd);
+    box-shadow:0 8px 16px rgba(43,26,18,0.2);
+    margin-top:-6px;
+  }
+  .cup-tag{ font-family:'IBM Plex Mono',monospace; font-size:0.76rem; color:var(--roast-700); opacity:0.7; text-align:center; }
+
+  .stage-empty-hint{
+    font-size:0.9rem; color:var(--roast-700); opacity:0.65; text-align:center; max-width:220px;
+  }
+
+  /* ---------- RESULT CARD ---------- */
+  .result{
+    margin-top:8px; padding:26px; border-radius:20px; width:100%;
+    background:linear-gradient(160deg, rgba(255,255,255,0.7), rgba(255,249,238,0.4));
+    border:1px solid var(--glass-border);
+    opacity:0; transform:translateY(14px); transition:all .5s ease;
+  }
+  .result.show{ opacity:1; transform:translateY(0); }
+  .result h4.name{ font-size:1.5rem; text-align:center; margin-bottom:4px;}
+  .result .tagline{ text-align:center; font-size:0.88rem; color:var(--clay-500); font-style:italic; margin-bottom:16px;}
+  .stat-row{ display:flex; flex-direction:column; gap:10px; margin-bottom:14px;}
+  .stat{ display:flex; align-items:center; gap:10px; font-size:0.82rem;}
+  .stat .stat-label{ min-width:88px; font-weight:600; color:var(--roast-700);}
+  .stat-bar{ flex:1; height:8px; border-radius:99px; background:rgba(43,26,18,0.1); overflow:hidden;}
+  .stat-bar span{ display:block; height:100%; border-radius:99px; background:linear-gradient(90deg, var(--copper-300), var(--clay-500)); width:0%; transition:width .8s ease;}
+  .mood-line{ font-size:0.92rem; text-align:center; padding:12px; border-radius:12px; background:rgba(199,125,63,0.12); color:var(--roast-700); margin-bottom:14px;}
+  .rating{ display:flex; justify-content:center; align-items:baseline; gap:6px; font-family:'Fraunces',serif;}
+  .rating .num{ font-size:2.1rem; font-weight:700; color:var(--espresso-900);}
+  .rating .of10{ font-size:1rem; opacity:0.6;}
+
+  /* ---------- RECIPE TICKET (signature element) ---------- */
+  .ticket-wrap{ display:flex; justify-content:center; margin-top:20px;}
+  .ticket{
+    width:100%; max-width:380px; background:var(--paper);
+    font-family:'IBM Plex Mono', monospace; color:var(--espresso-950);
+    padding:26px 24px 20px;
+    box-shadow:0 18px 40px rgba(43,26,18,0.22);
+    position:relative;
+    clip-path: polygon(
+      0% 0%, 100% 0%, 100% 96%,
+      95% 100%, 90% 96%, 85% 100%, 80% 96%, 75% 100%, 70% 96%, 65% 100%,
+      60% 96%, 55% 100%, 50% 96%, 45% 100%, 40% 96%, 35% 100%, 30% 96%,
+      25% 100%, 20% 96%, 15% 100%, 10% 96%, 5% 100%, 0% 96%
+    );
+  }
+  .ticket-head{ text-align:center; border-bottom:1px dashed rgba(43,26,18,0.4); padding-bottom:12px; margin-bottom:12px;}
+  .ticket-head .t1{ font-weight:600; letter-spacing:0.12em; font-size:0.95rem;}
+  .ticket-head .t2{ font-size:0.7rem; opacity:0.65; margin-top:4px;}
+  .ticket-row{ display:flex; justify-content:space-between; font-size:0.82rem; padding:4px 0; }
+  .ticket-row .k{ opacity:0.65;}
+  .ticket-total{ border-top:1px dashed rgba(43,26,18,0.4); margin-top:10px; padding-top:10px; display:flex; justify-content:space-between; font-weight:600;}
+  .ticket-copy{
+    width:100%; margin-top:16px; background:var(--espresso-950); color:var(--cream-100);
+    padding:11px; border-radius:8px; font-family:'IBM Plex Mono',monospace; font-size:0.78rem; letter-spacing:0.06em;
+    cursor:pointer; border:none;
+  }
+  .ticket-copy:hover{ background:var(--roast-700); }
+
+  /* ---------- ACHIEVEMENTS ---------- */
+  .badge-grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; }
+  .badge{
+    padding:18px 14px; text-align:center; border-radius:16px; border:1.5px dashed var(--line);
+    opacity:0.4; filter:grayscale(1); transition:all .3s ease;
+  }
+  .badge.unlocked{ opacity:1; filter:none; border-style:solid; border-color:var(--copper-400); background:rgba(255,255,255,0.5); box-shadow:0 8px 18px rgba(169,116,79,0.2);}
+  .badge .icon{ font-size:1.9rem; display:block; margin-bottom:8px;}
+  .badge .name{ font-size:0.82rem; font-weight:600; color:var(--roast-700);}
+
+  /* ---------- FUN FACT ---------- */
+  .fact-card{
+    max-width:640px; margin:0 auto; padding:24px 28px; text-align:center; border-radius:18px;
+    display:flex; align-items:center; gap:14px; justify-content:center;
+  }
+  .fact-card .fb{ font-size:1.6rem; }
+  .fact-card p{ margin:0; font-size:0.98rem; color:var(--roast-700);}
+
+  /* ---------- LEADERBOARD ---------- */
+  .board{ max-width:560px; margin:0 auto; padding:10px 8px; }
+  .board-row{
+    display:flex; align-items:center; gap:14px; padding:14px 18px; border-radius:14px;
+    margin-bottom:8px; background:rgba(255,255,255,0.35);
+  }
+  .board-row.you{ background:linear-gradient(135deg, rgba(199,125,63,0.25), rgba(221,154,95,0.18)); border:1px solid var(--copper-400);}
+  .board-rank{ font-family:'Fraunces',serif; font-weight:700; font-size:1.2rem; color:var(--clay-500); width:28px;}
+  .board-name{ flex:1; font-weight:600; }
+  .board-score{ font-family:'IBM Plex Mono',monospace; font-size:0.85rem; opacity:0.7;}
+
+  /* ---------- FOOTER ---------- */
+  footer{ padding:44px 0 60px; text-align:center; color:var(--roast-700); opacity:0.75; font-size:0.9rem;}
+
+  /* toast */
+  .toast{
+    position:fixed; bottom:26px; left:50%; transform:translateX(-50%) translateY(20px);
+    background:var(--espresso-950); color:var(--cream-100); padding:12px 22px; border-radius:99px;
+    font-size:0.88rem; opacity:0; pointer-events:none; transition:all .3s ease; z-index:100;
+  }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="brand"><span class="bean">☕</span> BrewVerse</div>
+    <nav class="nav-links">
+      <a href="#brewing">Brew</a>
+      <a href="#badges">Badges</a>
+      <a href="#leaderboard">Leaderboard</a>
+    </nav>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="hero-grain"></div>
+  <div class="wrap">
+    <span class="eyebrow">A tiny brewing game, zero calories</span>
+    <h1>☕ Brew Your Perfect Cup</h1>
+    <p class="subtitle">Mix ingredients, experiment with recipes, and discover your signature coffee.</p>
+    <a href="#brewing"><button class="btn btn-primary">Start Brewing →</button></a>
+    <div class="hero-cup-peek">☕</div>
+  </div>
+</section>
+
+<section id="brewing">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow mono">the counter</span>
+      <h2>Build your brew</h2>
+      <p>Pick a base, add milk and sweetness, then pile on flavor. Nothing here is scientific — just delicious.</p>
+    </div>
+
+    <div class="brew-grid">
+      <!-- CONTROLS -->
+      <div class="controls glass">
+
+        <div class="field-group">
+          <label class="title">🫘 Coffee Base</label>
+          <div class="chip-row" data-group="base">
+            <div class="chip" data-value="espresso">Espresso</div>
+            <div class="chip" data-value="americano">Americano</div>
+            <div class="chip" data-value="coldbrew">Cold Brew</div>
+            <div class="chip" data-value="filter">Filter Coffee</div>
+            <div class="chip" data-value="cappuccino">Cappuccino Base</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-group">
+          <label class="title">🥛 Milk</label>
+          <div class="chip-row" data-group="milk">
+            <div class="chip" data-value="none">No Milk</div>
+            <div class="chip" data-value="whole">Whole Milk</div>
+            <div class="chip" data-value="oat">Oat Milk</div>
+            <div class="chip" data-value="almond">Almond Milk</div>
+            <div class="chip" data-value="soy">Soy Milk</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-group">
+          <label class="title">🍯 Sweetener</label>
+          <div class="slider-row">
+            <span class="slider-label" id="spoonLabel">0 spoons</span>
+            <input type="range" id="spoonSlider" min="0" max="5" step="1" value="0">
+          </div>
+          <div style="height:14px;"></div>
+          <div class="chip-row" data-group="sugarType">
+            <div class="chip" data-value="none">None</div>
+            <div class="chip" data-value="white">White Sugar</div>
+            <div class="chip" data-value="brown">Brown Sugar</div>
+            <div class="chip" data-value="honey">Honey</div>
+            <div class="chip" data-value="jaggery">Jaggery</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-group">
+          <label class="title">✨ Flavors <span style="font-weight:400;opacity:0.6;font-size:0.8rem;">(pick as many as you like)</span></label>
+          <div class="chip-row" data-group="flavors" data-multi="true">
+            <div class="chip" data-value="vanilla">Vanilla</div>
+            <div class="chip" data-value="caramel">Caramel</div>
+            <div class="chip" data-value="hazelnut">Hazelnut</div>
+            <div class="chip" data-value="chocolate">Chocolate</div>
+            <div class="chip" data-value="cinnamon">Cinnamon</div>
+            <div class="chip" data-value="mocha">Mocha</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-group">
+          <label class="title">🍫 Extras</label>
+          <div class="chip-row" data-group="extras" data-multi="true">
+            <div class="chip" data-value="ice">Ice Cubes</div>
+            <div class="chip" data-value="whip">Whipped Cream</div>
+            <div class="chip" data-value="cocoa">Cocoa Powder</div>
+            <div class="chip" data-value="choc-syrup">Chocolate Syrup</div>
+            <div class="chip" data-value="cinnamon-dust">Cinnamon Dust</div>
+            <div class="chip" data-value="marshmallow">Marshmallows</div>
+            <div class="chip" data-value="jelly">Coffee Jelly</div>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-group">
+          <label class="title">⚡ Strength</label>
+          <div class="slider-row">
+            <input type="range" id="strengthSlider" min="1" max="10" step="1" value="5">
+          </div>
+          <div class="scale-caps"><span>Mild</span><span>Strong</span></div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="field-group">
+          <label class="title">🌡️ Temperature</label>
+          <div class="chip-row" data-group="temp">
+            <div class="chip" data-value="hot">Hot</div>
+            <div class="chip" data-value="iced">Iced</div>
+          </div>
+        </div>
+
+        <div class="action-row">
+          <button class="btn btn-brew" id="brewBtn">BREW MY COFFEE</button>
+          <button class="btn btn-surprise" id="surpriseBtn">🎲 Surprise Me</button>
+        </div>
+      </div>
+
+      <!-- STAGE -->
+      <div class="stage glass">
+        <h3 id="stageHint">Your cup is waiting…</h3>
+        <div class="cup-scene">
+          <div class="steam s1" id="steam1"></div>
+          <div class="steam s2" id="steam2"></div>
+          <div class="steam s3" id="steam3"></div>
+          <div class="cup-body" id="cupBody">
+            <div class="foam" id="foamLayer"></div>
+            <div class="liquid" id="liquidLayer"></div>
+            <div class="toppings" id="toppingsLayer"></div>
+            <div class="cup-handle"></div>
+          </div>
+        </div>
+        <div class="saucer"></div>
+        <p class="stage-empty-hint" id="stageEmptyHint">Pick your ingredients, then hit "Brew My Coffee".</p>
+
+        <div class="result" id="resultCard">
+          <h4 class="name" id="resultName">—</h4>
+          <p class="tagline" id="resultTagline">—</p>
+          <div class="stat-row">
+            <div class="stat"><span class="stat-label">Sweetness</span><div class="stat-bar"><span id="barSweet"></span></div></div>
+            <div class="stat"><span class="stat-label">Strength</span><div class="stat-bar"><span id="barStrength"></span></div></div>
+            <div class="stat"><span class="stat-label">Creaminess</span><div class="stat-bar"><span id="barCream"></span></div></div>
+          </div>
+          <div class="mood-line" id="moodLine">—</div>
+          <div class="rating"><span class="num" id="ratingNum">0.0</span><span class="of10">/ 10</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ticket-wrap">
+      <div class="ticket" id="ticket" style="display:none;">
+        <div class="ticket-head">
+          <div class="t1">BREWVERSE CAFÉ</div>
+          <div class="t2" id="ticketTime">order slip</div>
+        </div>
+        <div id="ticketBody"></div>
+        <div class="ticket-total"><span>SIGNATURE</span><span id="ticketDrinkName">—</span></div>
+        <button class="ticket-copy" id="copyRecipeBtn">COPY RECIPE TO CLIPBOARD</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="badges">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow mono">progress</span>
+      <h2>Achievements</h2>
+      <p>Badges unlock as you experiment. Keep brewing to collect them all.</p>
+    </div>
+    <div class="badge-grid" id="badgeGrid"></div>
+  </div>
+</section>
+
+<section id="funfact">
+  <div class="wrap">
+    <div class="fact-card glass">
+      <span class="fb">💡</span>
+      <p id="funFactText">Brew a coffee to reveal a fun fact.</p>
+    </div>
+  </div>
+</section>
+
+<section id="leaderboard">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="eyebrow mono">community</span>
+      <h2>Top Community Brews</h2>
+      <p>Mock rankings from fellow home baristas around BrewVerse.</p>
+    </div>
+    <div class="board glass" id="boardList"></div>
+  </div>
+</section>
+
+<footer>
+  Made with ❤️ for coffee lovers.
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------------- STATE ---------------- */
+  const state = {
+    base: null,
+    milk: null,
+    spoons: 0,
+    sugarType: null,
+    flavors: new Set(),
+    extras: new Set(),
+    strength: 5,
+    temp: null,
+  };
+
+  let brewCount = 0;
+  let icedCount = 0;
+  const unlockedBadges = new Set();
+
+  /* ---------------- DATA ---------------- */
+  const BASE_INFO = {
+    espresso:   { label:"Espresso",          color:"#3b2415", strength:8, fillMax:62 },
+    americano:  { label:"Americano",         color:"#4a2c18", strength:5, fillMax:80 },
+    coldbrew:   { label:"Cold Brew",         color:"#2e1b10", strength:6, fillMax:80 },
+    filter:     { label:"Filter Coffee",     color:"#5a3820", strength:4, fillMax:78 },
+    cappuccino: { label:"Cappuccino Base",   color:"#6b4226", strength:5, fillMax:70 },
+  };
+  const MILK_INFO = {
+    none:   { label:"No Milk",     mix:0,   creaminess:0 },
+    whole:  { label:"Whole Milk",  mix:0.34,creaminess:8 },
+    oat:    { label:"Oat Milk",    mix:0.30,creaminess:6 },
+    almond: { label:"Almond Milk", mix:0.24,creaminess:5 },
+    soy:    { label:"Soy Milk",    mix:0.30,creaminess:6 },
+  };
+  const SUGAR_LABEL = { none:"None", white:"White Sugar", brown:"Brown Sugar", honey:"Honey", jaggery:"Jaggery" };
+  const FLAVOR_LABEL = { vanilla:"Vanilla", caramel:"Caramel", hazelnut:"Hazelnut", chocolate:"Chocolate", cinnamon:"Cinnamon", mocha:"Mocha" };
+  const FLAVOR_NAME_WORD = { vanilla:"Vanilla", caramel:"Caramel", hazelnut:"Hazelnut", chocolate:"Cocoa", cinnamon:"Cinnamon", mocha:"Mocha" };
+  const EXTRA_LABEL = { ice:"Ice Cubes", whip:"Whipped Cream", cocoa:"Cocoa Powder", "choc-syrup":"Chocolate Syrup", "cinnamon-dust":"Cinnamon Dust", marshmallow:"Marshmallows", jelly:"Coffee Jelly" };
+
+  const NOUNS = ["Brew","Bliss","Storm","Dream","Bloom","Velvet","Symphony","Whirl","Cloud","Ember","Reverie","Cascade"];
+  const STRONG_WORDS = ["Midnight","Blackout","Bold","Iron"];
+  const MILD_WORDS = ["Gentle","Soft","Whisper","Morning"];
+  const MID_WORDS = ["Classic","Balanced","Golden"];
+  const ICED_WORDS = ["Frozen","Frosty","Glacier","Chill"];
+
+  const FUN_FACTS = [
+    "Espresso actually contains less caffeine per serving than a full cup of drip coffee.",
+    "Cold brew is steeped for 12–24 hours, which makes it naturally sweeter and less acidic.",
+    "The word \"cappuccino\" comes from the brown hooded robes of Capuchin friars.",
+    "Coffee beans are technically the pit of a fruit called a coffee cherry.",
+    "Finland drinks more coffee per person than any other country in the world.",
+    "Beethoven reportedly counted exactly 60 beans for every cup he brewed.",
+    "Light roasts usually have slightly more caffeine than dark roasts.",
+    "The first webcam was invented to watch a coffee pot at Cambridge University.",
+    "Decaf isn't fully caffeine-free — it just has a lot less.",
+    "Oat milk foams differently than dairy milk because of its natural starches."
+  ];
+
+  const MOODS = [
+    { test:s => s.temp==="iced" && s.strength>=7, text:"Perfect for hot afternoons and pushing through a deadline." },
+    { test:s => s.temp==="iced", text:"Perfect for sunny mornings and slow scrolling." },
+    { test:s => s.strength>=8, text:"Perfect for rainy evenings and late-night coding." },
+    { test:s => s.strength<=3 && s.sweetTotal>=6, text:"Perfect for cozy mornings and easing into the day." },
+    { test:s => s.flavors.has("chocolate") || s.flavors.has("mocha"), text:"Perfect for comfort-seeking, blanket-wrapped afternoons." },
+    { test:s => s.creaminess>=10, text:"Perfect for treating yourself between meetings." },
+    { test:s => s.extras.has("ice") || s.extras.has("jelly"), text:"Perfect for a playful pick-me-up on a slow day." },
+  ];
+  const DEFAULT_MOOD = "Perfect for whenever your cup feels a little empty.";
+
+  const BADGES = [
+    { id:"beginner", icon:"☕", name:"Beginner Brewer", test:() => brewCount>=1 },
+    { id:"balance", icon:"🎯", name:"Perfect Balance", test:(s) => Math.abs(s.sweetTotal-5)<=1 && Math.abs(s.strength-5)<=1 },
+    { id:"choc", icon:"🍫", name:"Chocolate Lover", test:(s) => s.flavors.has("chocolate") && (s.extras.has("cocoa")||s.extras.has("choc-syrup")) },
+    { id:"ice", icon:"❄️", name:"Ice Master", test:() => icedCount>=3 },
+    { id:"espresso", icon:"🔥", name:"Espresso Expert", test:(s) => s.base==="espresso" && s.strength>=8 },
+    { id:"master", icon:"🌟", name:"Master Barista", test:() => brewCount>=5 },
+  ];
+
+  const LEADERBOARD_BASE = [
+    { name:"Midnight Caramel", score:9.6 },
+    { name:"Vanilla Dream", score:9.3 },
+    { name:"Hazelnut Bliss", score:9.1 },
+    { name:"Frosty Mocha", score:8.9 },
+    { name:"Cinnamon Gold", score:8.6 },
+  ];
+
+  /* ---------------- HELPERS ---------------- */
+  function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+  function clamp(n,min,max){ return Math.max(min, Math.min(max,n)); }
+
+  function hexToRgb(hex){
+    const v = hex.replace('#','');
+    return [parseInt(v.substring(0,2),16), parseInt(v.substring(2,4),16), parseInt(v.substring(4,6),16)];
+  }
+  function rgbToHex(r,g,b){
+    return "#" + [r,g,b].map(x=>clamp(Math.round(x),0,255).toString(16).padStart(2,'0')).join('');
+  }
+  function mixColor(hexA, hexB, ratio){
+    const a = hexToRgb(hexA), b = hexToRgb(hexB);
+    return rgbToHex(
+      a[0]+(b[0]-a[0])*ratio,
+      a[1]+(b[1]-a[1])*ratio,
+      a[2]+(b[2]-a[2])*ratio
+    );
+  }
+
+  function toast(msg){
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(()=>t.classList.remove('show'), 2200);
+  }
+
+  /* ---------------- CHIP WIRING ---------------- */
+  document.querySelectorAll('.chip-row').forEach(row=>{
+    const group = row.dataset.group;
+    const multi = row.dataset.multi === "true";
+    row.querySelectorAll('.chip').forEach(chip=>{
+      chip.addEventListener('click', ()=>{
+        const val = chip.dataset.value;
+        if(multi){
+          const set = state[group];
+          if(set.has(val)){ set.delete(val); chip.classList.remove('active'); }
+          else { set.add(val); chip.classList.add('active'); }
+        } else {
+          row.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+          chip.classList.add('active');
+          state[group] = val;
+        }
+      });
+    });
+  });
+
+  const spoonSlider = document.getElementById('spoonSlider');
+  const spoonLabel = document.getElementById('spoonLabel');
+  spoonSlider.addEventListener('input', ()=>{
+    state.spoons = parseInt(spoonSlider.value,10);
+    spoonLabel.textContent = state.spoons===1 ? "1 spoon" : state.spoons + " spoons";
+  });
+
+  const strengthSlider = document.getElementById('strengthSlider');
+  strengthSlider.addEventListener('input', ()=>{
+    state.strength = parseInt(strengthSlider.value,10);
+  });
+
+  /* ---------------- VALIDATION ---------------- */
+  function ensureDefaults(){
+    if(!state.base){ state.base = "espresso"; setChipActive('base','espresso'); }
+    if(!state.milk){ state.milk = "none"; setChipActive('milk','none'); }
+    if(!state.sugarType){ state.sugarType = state.spoons>0 ? "white" : "none"; setChipActive('sugarType', state.sugarType); }
+    if(!state.temp){ state.temp = "hot"; setChipActive('temp','hot'); }
+  }
+  function setChipActive(group, value){
+    document.querySelectorAll(`.chip-row[data-group="${group}"] .chip`).forEach(c=>{
+      c.classList.toggle('active', c.dataset.value===value);
+    });
+  }
+
+  /* ---------------- COMPUTE RESULT ---------------- */
+  function computeResult(){
+    ensureDefaults();
+    const baseInfo = BASE_INFO[state.base];
+    const milkInfo = MILK_INFO[state.milk];
+
+    const sweetFromSpoons = state.spoons * 1.8;
+    const sweetFromExtras = (state.extras.has('whip')?0.8:0) + (state.extras.has('marshmallow')?1.2:0) + (state.extras.has('choc-syrup')?0.8:0);
+    const sweetTotal = clamp(Math.round((sweetFromSpoons + sweetFromExtras)*10)/10, 0, 10);
+
+    let strength = clamp(Math.round((baseInfo.strength*0.5 + state.strength*0.5)*10)/10, 1, 10);
+
+    let creaminess = milkInfo.creaminess
+      + (state.extras.has('whip')?2.5:0)
+      + (state.extras.has('marshmallow')?1:0)
+      + (state.base==="cappuccino"?1.5:0);
+    creaminess = clamp(Math.round(creaminess*10)/10, 0, 10);
+
+    const s = {
+      base: state.base, milk: state.milk, temp: state.temp,
+      flavors: state.flavors, extras: state.extras,
+      sweetTotal, strength, creaminess
+    };
+
+    // Name generation
+    const flavorArr = Array.from(state.flavors);
+    let flavorWord;
+    if(flavorArr.length){
+      flavorWord = FLAVOR_NAME_WORD[flavorArr[0]];
+    } else if(state.milk !== 'none'){
+      flavorWord = "Velvet";
+    } else {
+      flavorWord = "Pure";
+    }
+    let prefix = "";
+    if(state.temp==="iced"){ prefix = pick(ICED_WORDS); }
+    else if(strength>=7){ prefix = pick(STRONG_WORDS); }
+    else if(strength<=3){ prefix = pick(MILD_WORDS); }
+    else { prefix = pick(MID_WORDS); }
+    const noun = pick(NOUNS);
+    const drinkName = `${prefix} ${flavorWord} ${noun}`;
+
+    // Mood
+    let mood = DEFAULT_MOOD;
+    for(const m of MOODS){ if(m.test(s)){ mood = m.text; break; } }
+
+    // Rating - fun, not scientific
+    let rating = 6.2
+      + (flavorArr.length>=1 ? 0.6:0)
+      + (flavorArr.length>=3 ? 0.4:0)
+      + (state.extras.size>=2 ? 0.5:0)
+      + (Math.abs(sweetTotal-5)<=2 ? 0.5:0)
+      + (Math.random()*1.2 - 0.2);
+    rating = clamp(Math.round(rating*10)/10, 4.5, 10);
+
+    return { baseInfo, milkInfo, sweetTotal, strength, creaminess, drinkName, mood, rating, flavorArr };
+  }
+
+  /* ---------------- CUP ANIMATION ---------------- */
+  function animateCup(result){
+    const liquidLayer = document.getElementById('liquidLayer');
+    const foamLayer = document.getElementById('foamLayer');
+    const toppingsLayer = document.getElementById('toppingsLayer');
+    const cupBody = document.getElementById('cupBody');
+    const steam = [document.getElementById('steam1'),document.getElementById('steam2'),document.getElementById('steam3')];
+
+    toppingsLayer.innerHTML = "";
+    liquidLayer.style.height = "0%";
+    foamLayer.style.opacity = "0";
+    foamLayer.style.height = "0px";
+    steam.forEach(s=>s.classList.remove('show'));
+
+    const liquidColor = mixColor(result.baseInfo.color, "#f2e6cf", result.milkInfo.mix);
+    liquidLayer.style.background = `linear-gradient(180deg, ${mixColor(liquidColor,"#ffffff",0.12)}, ${liquidColor})`;
+
+    const fillPct = clamp(result.baseInfo.fillMax + (state.temp==='iced'? -8:0), 40, 84);
+
+    requestAnimationFrame(()=>{
+      setTimeout(()=>{ liquidLayer.style.height = fillPct + "%"; }, 120);
+    });
+
+    // foam / creaminess visual
+    if(result.creaminess>=4){
+      setTimeout(()=>{
+        foamLayer.style.height = "16px";
+        foamLayer.style.opacity = "1";
+      }, 900);
+    }
+
+    // steam if hot
+    if(state.temp==='hot'){
+      setTimeout(()=>{ steam.forEach(s=>s.classList.add('show')); }, 1000);
+    }
+
+    // ice cubes if iced or ice extra
+    if(state.temp==='iced' || state.extras.has('ice')){
+      const positions = [ {left:44,top:50}, {left:78,top:38}, {left:112,top:52} ];
+      positions.forEach((p,i)=>{
+        const cube = document.createElement('div');
+        cube.className = 'ice-cube';
+        cube.style.left = p.left+"px";
+        cube.style.setProperty('--rest-top', p.top+"px");
+        toppingsLayer.appendChild(cube);
+        setTimeout(()=>cube.classList.add('drop'), 1300 + i*140);
+      });
+    }
+
+    // extras visuals: whipped cream / cocoa dust / cinnamon dust / marshmallow / jelly
+    let emojiExtras = [];
+    if(state.extras.has('whip')) emojiExtras.push('🍦');
+    if(state.extras.has('cocoa')) emojiExtras.push('🟤');
+    if(state.extras.has('choc-syrup')) emojiExtras.push('🍫');
+    if(state.extras.has('cinnamon-dust')) emojiExtras.push('🟠');
+    if(state.extras.has('marshmallow')) emojiExtras.push('⚪');
+    if(state.extras.has('jelly')) emojiExtras.push('🟫');
+
+    emojiExtras.forEach((em,i)=>{
+      const el = document.createElement('div');
+      el.textContent = em;
+      el.style.position = 'absolute';
+      el.style.left = (30 + i*24) + 'px';
+      el.style.top = '6px';
+      el.style.fontSize = '18px';
+      el.style.opacity = '0';
+      el.style.transition = 'opacity .5s ease, top .5s ease';
+      toppingsLayer.appendChild(el);
+      setTimeout(()=>{ el.style.opacity='1'; el.style.top='2px'; }, 1500 + i*100);
+    });
+
+    cupBody.animate(
+      [{ transform:'translateY(0px)' },{ transform:'translateY(-4px)' },{ transform:'translateY(0px)' }],
+      { duration:500, delay:120 }
+    );
+  }
+
+  /* ---------------- RENDER RESULT CARD ---------------- */
+  function renderResult(result){
+    document.getElementById('resultName').textContent = result.drinkName;
+    document.getElementById('resultTagline').textContent = `${BASE_INFO[state.base].label} · ${state.temp==='iced'?'Iced':'Hot'} · ${state.milk!=='none'?MILK_INFO[state.milk].label:'No Milk'}`;
+    document.getElementById('moodLine').textContent = result.mood;
+    document.getElementById('ratingNum').textContent = result.rating.toFixed(1);
+
+    setTimeout(()=>{
+      document.getElementById('barSweet').style.width = (result.sweetTotal*10)+"%";
+      document.getElementById('barStrength').style.width = (result.strength*10)+"%";
+      document.getElementById('barCream').style.width = (result.creaminess*10)+"%";
+    }, 150);
+
+    document.getElementById('resultCard').classList.add('show');
+    document.getElementById('stageHint').textContent = "Fresh off the counter";
+    document.getElementById('stageEmptyHint').style.display = 'none';
+  }
+
+  /* ---------------- RECIPE TICKET ---------------- */
+  function renderTicket(result){
+    const ticket = document.getElementById('ticket');
+    const body = document.getElementById('ticketBody');
+    const flavorText = result.flavorArr.length ? result.flavorArr.map(f=>FLAVOR_LABEL[f]).join(', ') : 'None';
+    const extrasText = state.extras.size ? Array.from(state.extras).map(e=>EXTRA_LABEL[e]).join(', ') : 'None';
+
+    body.innerHTML = `
+      <div class="ticket-row"><span class="k">Coffee Type</span><span>${BASE_INFO[state.base].label}</span></div>
+      <div class="ticket-row"><span class="k">Milk</span><span>${MILK_INFO[state.milk].label}</span></div>
+      <div class="ticket-row"><span class="k">Sweetener</span><span>${state.spoons} tsp · ${SUGAR_LABEL[state.sugarType]}</span></div>
+      <div class="ticket-row"><span class="k">Flavor Shots</span><span>${flavorText}</span></div>
+      <div class="ticket-row"><span class="k">Extras</span><span>${extrasText}</span></div>
+      <div class="ticket-row"><span class="k">Temperature</span><span>${state.temp==='iced'?'Iced':'Hot'}</span></div>
+    `;
+    document.getElementById('ticketDrinkName').textContent = result.drinkName;
+    document.getElementById('ticketTime').textContent = "order #" + String(brewCount).padStart(3,'0');
+    ticket.style.display = 'block';
+
+    document.getElementById('copyRecipeBtn').onclick = ()=>{
+      const text = `BrewVerse Recipe — ${result.drinkName}\n` +
+        `Coffee Type: ${BASE_INFO[state.base].label}\n` +
+        `Milk: ${MILK_INFO[state.milk].label}\n` +
+        `Sweetener: ${state.spoons} tsp, ${SUGAR_LABEL[state.sugarType]}\n` +
+        `Flavor Shots: ${flavorText}\n` +
+        `Extras: ${extrasText}\n` +
+        `Temperature: ${state.temp==='iced'?'Iced':'Hot'}\n` +
+        `Rating: ${result.rating.toFixed(1)}/10`;
+      if(navigator.clipboard && navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(()=>toast('Recipe copied to clipboard ✓')).catch(()=>toast('Could not copy — select the ticket text manually.'));
+      } else {
+        toast('Clipboard unavailable in this browser.');
+      }
+    };
+  }
+
+  /* ---------------- BADGES ---------------- */
+  function renderBadges(sForTest){
+    const grid = document.getElementById('badgeGrid');
+    grid.innerHTML = "";
+    BADGES.forEach(b=>{
+      if(sForTest && b.test(sForTest)) unlockedBadges.add(b.id);
+      const el = document.createElement('div');
+      el.className = 'badge' + (unlockedBadges.has(b.id) ? ' unlocked' : '');
+      el.innerHTML = `<span class="icon">${b.icon}</span><span class="name">${b.name}</span>`;
+      grid.appendChild(el);
+    });
+  }
+  renderBadges(null);
+
+  /* ---------------- FUN FACT ---------------- */
+  function renderFunFact(){
+    document.getElementById('funFactText').textContent = pick(FUN_FACTS);
+  }
+
+  /* ---------------- LEADERBOARD ---------------- */
+  function renderLeaderboard(userEntry){
+    const board = document.getElementById('boardList');
+    let list = LEADERBOARD_BASE.slice();
+    if(userEntry) list.push(userEntry);
+    list.sort((a,b)=>b.score-a.score);
+    board.innerHTML = "";
+    list.forEach((item,i)=>{
+      const row = document.createElement('div');
+      row.className = 'board-row' + (item.you ? ' you' : '');
+      row.innerHTML = `<span class="board-rank">${i+1}</span><span class="board-name">${item.name}${item.you?' — You!':''}</span><span class="board-score">${item.score.toFixed(1)}</span>`;
+      board.appendChild(row);
+    });
+  }
+  renderLeaderboard(null);
+
+  /* ---------------- BREW FLOW ---------------- */
+  function brew(){
+    ensureDefaults();
+    brewCount++;
+    if(state.temp==='iced') icedCount++;
+
+    const result = computeResult();
+    animateCup(result);
+    setTimeout(()=>renderResult(result), 250);
+    setTimeout(()=>renderTicket(result), 1400);
+    setTimeout(()=>{
+      renderFunFact();
+      renderBadges(result);
+      renderLeaderboard({ name: result.drinkName, score: result.rating, you:true });
+      document.getElementById('ticket').scrollIntoView({behavior:'smooth', block:'nearest'});
+    }, 1500);
+  }
+
+  document.getElementById('brewBtn').addEventListener('click', brew);
+
+  /* ---------------- SURPRISE ME ---------------- */
+  function surprise(){
+    // base
+    const bases = Object.keys(BASE_INFO);
+    state.base = pick(bases); setChipActive('base', state.base);
+    // milk
+    const milks = Object.keys(MILK_INFO);
+    state.milk = pick(milks); setChipActive('milk', state.milk);
+    // spoons
+    state.spoons = Math.floor(Math.random()*6);
+    spoonSlider.value = state.spoons;
+    spoonLabel.textContent = state.spoons===1 ? "1 spoon" : state.spoons + " spoons";
+    // sugar type
+    const sugars = Object.keys(SUGAR_LABEL);
+    state.sugarType = state.spoons===0 ? "none" : pick(sugars.filter(s=>s!=='none'));
+    setChipActive('sugarType', state.sugarType);
+    // flavors: random 0-3
+    state.flavors.clear();
+    document.querySelectorAll('.chip-row[data-group="flavors"] .chip').forEach(c=>c.classList.remove('active'));
+    const flavorKeys = Object.keys(FLAVOR_LABEL);
+    const numFlavors = Math.floor(Math.random()*4);
+    const shuffled = flavorKeys.sort(()=>Math.random()-0.5);
+    shuffled.slice(0,numFlavors).forEach(f=>{
+      state.flavors.add(f);
+      document.querySelector(`.chip-row[data-group="flavors"] .chip[data-value="${f}"]`).classList.add('active');
+    });
+    // extras: random 0-3
+    state.extras.clear();
+    document.querySelectorAll('.chip-row[data-group="extras"] .chip').forEach(c=>c.classList.remove('active'));
+    const extraKeys = Object.keys(EXTRA_LABEL);
+    const numExtras = Math.floor(Math.random()*4);
+    const shuffledE = extraKeys.sort(()=>Math.random()-0.5);
+    shuffledE.slice(0,numExtras).forEach(e=>{
+      state.extras.add(e);
+      document.querySelector(`.chip-row[data-group="extras"] .chip[data-value="${e}"]`).classList.add('active');
+    });
+    // strength
+    state.strength = 1 + Math.floor(Math.random()*10);
+    strengthSlider.value = state.strength;
+    // temp
+    state.temp = Math.random()>0.5 ? "hot" : "iced";
+    setChipActive('temp', state.temp);
+
+    brew();
+  }
+  document.getElementById('surpriseBtn').addEventListener('click', surprise);
+
+
+})();
+</script>
+</body>
+</html>
